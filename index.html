@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hán Tự Nhanh – Đua từ vựng HSK 3-6</title>
+<style>
+:root{--bg:#eef2f7;--card:#fff;--tx:#1b2430;--mut:#6b7788;--pri:#e5392f;--ok:#1fa463;--bad:#d93a3a;--bd:#d9e0ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151c;--card:#1a222d;--tx:#eef2f7;--mut:#93a0b2;--bd:#2c3745}}
+:root[data-theme="dark"]{--bg:#10151c;--card:#1a222d;--tx:#eef2f7;--mut:#93a0b2;--bd:#2c3745}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:16px}
+h1{font-size:26px;margin:8px 0 2px}
+.sub{color:var(--mut);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:12px}
+label{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+input[type=text]{width:100%;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:13px 16px;background:var(--pri);color:#fff;font-weight:600;width:100%}
+button.sec{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+button:disabled{opacity:.5}
+.row{display:flex;gap:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{flex:1;min-width:64px;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--bd);cursor:pointer;user-select:none}
+.chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.hide{display:none}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.bar{height:8px;border-radius:8px;background:var(--bd);overflow:hidden;margin:8px 0 12px}
+.bar i{display:block;height:100%;background:var(--pri);width:100%;transition:width .25s linear}
+.hz{font-size:72px;text-align:center;margin:8px 0 0;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif}
+.py{text-align:center;color:var(--mut);font-size:18px;margin-bottom:12px}
+.opt{margin-bottom:8px;text-align:left;background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.opt.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.opt.bad{background:var(--bad);color:#fff;border-color:var(--bad)}
+.pl{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid var(--bd)}
+.pl:last-child{border:0}
+.me{font-weight:700;color:var(--pri)}
+.code{font-size:40px;letter-spacing:8px;text-align:center;font-weight:800;margin:4px 0}
+.note{font-size:13px;color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<section id="home">
+  <h1>汉字 Hán Tự Nhanh</h1>
+  <p class="sub">Đua từ vựng HSK 3-6 cùng bạn bè, trên điện thoại hoặc máy tính.</p>
+  <div class="card">
+    <label>Tên của bạn</label>
+    <input type="text" id="name" maxlength="14" placeholder="Ví dụ: Linh">
+  </div>
+  <div class="card">
+    <label>Chọn cấp độ</label>
+    <div class="chips" id="lv"></div>
+  </div>
+  <div class="card">
+    <button id="solo">Chơi một mình (60 giây)</button>
+    <p class="note">Mỗi câu đúng +10 điểm, sai bị khoá 0,6 giây.</p>
+  </div>
+  <div class="card">
+    <button id="mk" class="sec">Tạo phòng cho bạn bè</button>
+    <div class="row" style="margin-top:8px">
+      <input type="text" id="jc" maxlength="4" placeholder="Mã phòng" style="text-transform:uppercase">
+      <button id="jn" class="sec" style="width:auto">Vào</button>
+    </div>
+    <p class="note" id="rmNote">Nhập mã phòng bạn bè gửi, hoặc mở link mời.</p>
+  </div>
+</section>
+
+<section id="lobby" class="hide">
+  <h1>Phòng chờ</h1>
+  <div class="card"><div class="note" style="text-align:center">Mã phòng</div><div class="code" id="rc"></div>
+  <button class="sec" id="cp" style="margin-top:8px">Sao chép link mời</button></div>
+  <div class="card" id="plist"></div>
+  <button id="go" class="hide">Bắt đầu đua!</button>
+  <p class="note" id="wait" style="text-align:center">Chờ chủ phòng bấm bắt đầu...</p>
+  <button class="sec" id="lb" style="margin-top:8px">Rời phòng</button>
+</section>
+
+<section id="game" class="hide">
+  <div class="top"><span id="tm">60</span><span id="sc">0 điểm</span></div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="card">
+    <div class="row" style="margin-bottom:8px"><button class="sec" id="tp" style="padding:8px"></button><button class="sec" id="ts" style="padding:8px"></button><button class="sec" id="rp" style="padding:8px">🔊 Nghe lại</button></div><div class="hz" id="hz"></div><div class="py" id="py"></div>
+    <div id="opts"></div>
+  </div>
+  <div class="card hide" id="live"></div>
+</section>
+
+<section id="end" class="hide">
+  <h1 id="endT">Kết thúc!</h1>
+  <div class="card" id="rank"></div>
+  <div class="card"><div class="note">Từ bạn làm sai (ôn lại nhé)</div><div id="miss"></div></div>
+  <button id="again">Về trang chính</button>
+</section>
+</main>
+
+<script>
+const W={
+3:[["办法","bànfǎ","cách, biện pháp"],["比赛","bǐsài","cuộc thi, trận đấu"],["重要","zhòngyào","quan trọng"],["突然","tūrán","đột nhiên"],["终于","zhōngyú","cuối cùng thì"],["担心","dānxīn","lo lắng"],["习惯","xíguàn","thói quen"],["照顾","zhàogù","chăm sóc"],["简单","jiǎndān","đơn giản"],["世界","shìjiè","thế giới"],["注意","zhùyì","chú ý"],["放心","fàngxīn","yên tâm"]],
+4:[["复杂","fùzá","phức tạp"],["经验","jīngyàn","kinh nghiệm"],["打算","dǎsuan","dự định"],["讨论","tǎolùn","thảo luận"],["精彩","jīngcǎi","đặc sắc, hay"],["积极","jījí","tích cực"],["竞争","jìngzhēng","cạnh tranh"],["解决","jiějué","giải quyết"],["迟到","chídào","đến muộn"],["获得","huòdé","đạt được"],["温度","wēndù","nhiệt độ"],["原谅","yuánliàng","tha thứ"]],
+5:[["吸引","xīyǐn","thu hút"],["创造","chuàngzào","sáng tạo, tạo ra"],["谦虚","qiānxū","khiêm tốn"],["犹豫","yóuyù","do dự"],["尊重","zūnzhòng","tôn trọng"],["坚持","jiānchí","kiên trì"],["轻易","qīngyì","dễ dàng"],["保证","bǎozhèng","đảm bảo"],["缺点","quēdiǎn","khuyết điểm"],["夸张","kuāzhāng","khoa trương"],["珍惜","zhēnxī","trân trọng"],["推辞","tuīcí","từ chối khéo"]],
+6:[["迫切","pòqiè","cấp bách"],["衰退","shuāituì","suy thoái"],["恰当","qiàdàng","thích đáng"],["刻苦","kèkǔ","chăm chỉ, cần cù"],["繁荣","fánróng","phồn vinh"],["慷慨","kāngkǎi","hào phóng"],["谨慎","jǐnshèn","cẩn trọng"],["挑剔","tiāoti","xoi mói"],["妥协","tuǒxié","thỏa hiệp"],["审美","shěnměi","thẩm mỹ"],["恳切","kěnqiè","chân thành tha thiết"],["敏锐","mǐnruì","nhạy bén"]]
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let levels=new Set([3,4,5,6]),room=null,isHost=false,code="",seed=1,me={name:"",score:0},peers=[],lastGo=0,G=null,unsub=null;
+try{const n=localStorage.getItem("hz_name");if(n)$("name").value=n}catch(e){}
+[3,4,5,6].forEach(l=>{const d=document.createElement("div");d.className="chip on";d.textContent="HSK "+l;d.onclick=()=>{if(levels.has(l)){if(levels.size>1){levels.delete(l);d.classList.remove("on")}}else{levels.add(l);d.classList.add("on")}};$("lv").appendChild(d)});
+const S={py:true,snd:true};
+try{const s=JSON.parse(localStorage.getItem("hz_set")||"null");if(s){S.py=!!s.py;S.snd=!!s.snd}}catch(e){}
+function upd(){$("tp").textContent="Pinyin: "+(S.py?"Bật":"Tắt");$("ts").textContent="Tiếng: "+(S.snd?"Bật":"Tắt");$("py").style.visibility=S.py?"visible":"hidden";try{localStorage.setItem("hz_set",JSON.stringify(S))}catch(e){}}
+function speak(t,force){if((!S.snd&&!force)||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="zh-CN";u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+$("tp").onclick=()=>{S.py=!S.py;upd()};
+$("ts").onclick=()=>{S.snd=!S.snd;upd();if(S.snd&&G&&G.q)speak(G.q.a[0])};
+$("rp").onclick=()=>{if(G&&G.q)speak(G.q.a[0],true)};
+upd();
+function show(id){["home","lobby","game","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
+function nm(){const n=$("name").value.trim()||"Bạn";try{localStorage.setItem("hz_name",n)}catch(e){}return n}
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function pool(){let p=[];[...levels].forEach(l=>W[l].forEach(w=>p.push(w)));return p}
+
+function makeQ(r,P){const a=P[Math.floor(r()*P.length)];const o=[a];let g=0;while(o.length<4&&g++<50){const b=P[Math.floor(r()*P.length)];if(!o.includes(b))o.push(b)}
+  for(let i=o.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[o[i],o[j]]=[o[j],o[i]]}return{a,o}}
+
+function startGame(sd,lvs,multi){
+  levels=new Set(lvs);const P=pool(),r=rng(sd);
+  G={r,P,t:60,score:0,lock:false,miss:[],multi,end:Date.now()+60000};
+  show("game");$("live").classList.toggle("hide",!multi);$("sc").textContent="0 điểm";
+  if(multi)room.presence({score:0,done:false});
+  next();
+  G.iv=setInterval(()=>{const left=Math.max(0,Math.ceil((G.end-Date.now())/1000));$("tm").textContent=left+"s";$("bar").style.width=(left/60*100)+"%";if(left<=0)finish()},200);
+  renderLive();
+}
+function next(){G.q=makeQ(G.r,G.P);const{a,o}=G.q;$("hz").textContent=a[0];$("py").textContent=a[1];speak(a[0]);
+  $("opts").innerHTML="";o.forEach(w=>{const b=document.createElement("button");b.className="opt";b.textContent=w[2];b.onclick=()=>pick(b,w);$("opts").appendChild(b)})}
+function pick(b,w){if(G.lock||!G)return;G.lock=true;const ok=w===G.q.a;
+  if(ok){b.classList.add("ok");G.score+=10}else{b.classList.add("bad");[...$("opts").children].forEach(x=>{if(x.textContent===G.q.a[2])x.classList.add("ok")});if(!G.miss.includes(G.q.a))G.miss.push(G.q.a)}
+  $("sc").textContent=G.score+" điểm";if(G.multi)room.presence({score:G.score});
+  setTimeout(()=>{if(!G)return;G.lock=false;if(Date.now()<G.end)next()},ok?250:700)}
+function renderLive(){if(!G||!G.multi)return;const ps=players().sort((a,b)=>b.score-a.score);
+  $("live").innerHTML=ps.map(p=>`<div class="pl ${p.isMe?"me":""}"><span>${esc(p.name)}</span><b>${p.score}</b></div>`).join("")}
+function players(){return peers.filter(p=>p.presence&&p.presence.name).map(p=>({name:p.presence.name,score:+p.presence.score||0,done:!!p.presence.done,host:!!p.presence.host,isMe:p.isMe&&p.sameTab}))}
+function finish(){if(!G||G.fin)return;G.fin=true;clearInterval(G.iv);
+  if(G.multi)room.presence({score:G.score,done:true});
+  show("end");$("endT").textContent=G.multi?"Bảng xếp hạng":"Bạn được "+G.score+" điểm";
+  $("miss").innerHTML=G.miss.length?G.miss.map(w=>`<div class="pl"><span>${esc(w[0])} ${esc(w[1])}</span><span>${esc(w[2])}</span></div>`).join(""):"<p class='note'>Không sai từ nào. Quá đỉnh!</p>";
+  renderRank()}
+function renderRank(){if(!G)return;if(!G.multi){$("rank").innerHTML=`<div class="pl me"><span>${esc(me.name)}</span><b>${G.score}</b></div>`;return}
+  const ps=players().sort((a,b)=>b.score-a.score);
+  $("rank").innerHTML=ps.map((p,i)=>`<div class="pl ${p.isMe?"me":""}"><span>${i+1}. ${esc(p.name)} ${p.done?"":"(đang chơi...)"}</span><b>${p.score}</b></div>`).join("")}
+
+$("solo").onclick=()=>{me.name=nm();startGame(Date.now()%1e9,[...levels],false)};
+$("again").onclick=()=>{leave();show("home")};
+
+let ws=null,myId=null;
+function send(o){if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))}
+function connect(c,host){me.name=nm();lastGo=0;$("rmNote").textContent="Đang kết nối...";
+  room={presence:p=>send({t:"p",score:p.score,done:p.done})};
+  const proto=location.protocol==="https:"?"wss://":"ws://";
+  ws=new WebSocket(proto+location.host+"/ws");
+  ws.onopen=()=>send(host?{t:"create",name:me.name}:{t:"join",code:c,name:me.name});
+  ws.onerror=()=>{$("rmNote").textContent="Không kết nối được máy chủ."};
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
+    if(m.t==="err"){leave();show("home");$("rmNote").textContent=m.msg;return}
+    if(m.t!=="room")return;
+    myId=m.you;code=m.code;isHost=m.hostId===m.you;
+    peers=m.players.map(p=>({presence:{name:p.name,score:p.score,done:p.done,host:p.id===m.hostId?1:0},isMe:p.id===m.you,sameTab:p.id===m.you}));
+    $("rc").textContent=m.code;$("go").classList.toggle("hide",!isHost);$("wait").classList.toggle("hide",isHost);
+    if(!$("home").classList.contains("hide"))show("lobby");
+    renderLobby();renderLive();if(G&&G.fin)renderRank();
+    if(m.go&&m.go!==lastGo&&!(G&&!G.fin)){lastGo=m.go;startGame(m.seed,m.lv,true)}};
+  ws.onclose=()=>{if(room){leave();show("home");$("rmNote").textContent="Mất kết nối với phòng."}}}
+function renderLobby(){$("plist").innerHTML=players().map(p=>`<div class="pl ${p.isMe?"me":""}"><span>${esc(p.name)}${p.host?" 👑":""}</span></div>`).join("")||"<p class='note'>Đang kết nối...</p>"}
+function leave(){if(G){clearInterval(G.iv);G=null}if(ws){const w=ws;ws=null;room=null;w.onclose=null;w.close()}room=null;peers=[]}
+$("mk").onclick=()=>{const A="ABCDEFGHJKLMNPQRSTUVWXYZ";let c="";for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];connect(c,true)};
+$("jn").onclick=()=>{const c=$("jc").value.trim().toUpperCase();if(c.length<4){$("rmNote").textContent="Nhập đủ 4 ký tự mã phòng.";return}connect(c,false)};
+$("go").onclick=()=>send({t:"start",lv:[...levels]});
+$("cp").onclick=async()=>{const u=location.origin+"/?room="+code;try{if(navigator.share){await navigator.share({title:"Hán Tự Nhanh",text:"Vào phòng "+code+" đua từ vựng HSK!",url:u})}else{await navigator.clipboard.writeText(u);$("cp").textContent="Đã sao chép!"}}catch(e){}};
+try{const rp=new URLSearchParams(location.search).get("room");if(rp){$("jc").value=rp.slice(0,4).toUpperCase();$("rmNote").textContent="Nhập tên rồi bấm Vào để tham gia phòng "+$("jc").value}}catch(e){}
+$("lb").onclick=()=>{leave();show("home")};
+</script>
+</body>
+</html>
